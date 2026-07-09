@@ -62,11 +62,7 @@ def extract(req: InvoiceRequest):
         r"\bBill\s*No\.?\s*[:\-]?\s*([A-Za-z0-9\-\/]+)",
         r"\bReference\s*[:\-]?\s*([A-Za-z0-9\-\/]+)"
     ], text)
-    if invoice_no is None:
-    m = re.search(r"\b[A-Z]{1,5}-\d{2,8}\b", text)
-    if m:
-        invoice_no = m.group(0)
-
+    
     # -----------------------------
     # Vendor
     # -----------------------------
