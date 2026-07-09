@@ -57,10 +57,15 @@ def extract(req: InvoiceRequest):
     # Invoice Number
     # -----------------------------
     invoice_no = find_first([
-        r"Invoice\s*No\.?\s*[:#-]?\s*(.+)",
-        r"Invoice\s*Number\s*[:#-]?\s*(.+)",
-        r"Invoice\s*#\s*[:\-]?\s*(.+)"
+        r"Invoice\s*(?:No|Number|#|ID)?\s*[:\-]?\s*([A-Za-z0-9\-\/]+)",
+        r"\bInv(?:oice)?\s*[:\-]?\s*([A-Za-z0-9\-\/]+)",
+        r"\bBill\s*No\.?\s*[:\-]?\s*([A-Za-z0-9\-\/]+)",
+        r"\bReference\s*[:\-]?\s*([A-Za-z0-9\-\/]+)"
     ], text)
+    if invoice_no is None:
+    m = re.search(r"\b[A-Z]{1,5}-\d{2,8}\b", text)
+    if m:
+        invoice_no = m.group(0)
 
     # -----------------------------
     # Vendor
