@@ -204,32 +204,24 @@ def extract(req: InvoiceRequest):
     # Tax
     # ----------------------------------------
 
-    tax_labels = [
-        "gst",
-        "vat",
-        "tax",
-        "cgst",
-        "sgst",
-        "igst"
-    ]
+    tax = None
+tax_total = 0.0
+found_tax = False
 
-    for line in lines:
+# Sum GST components
+for line in lines:
+    lower = line.lower()
 
-        lower = line.lower()
+    if any(label in lower for label in ["cgst", "sgst", "igst", "gst", "vat", "tax"]):
 
-        for label in tax_labels:
+        nums = re.findall(r"([0-9][0-9,]*\.\d{2})", line)
 
-            if label in lower:
+        if nums:
+            tax_total += parse_money(nums[-1])
+            found_tax = True
 
-                m = re.search(r"([0-9][0-9,]*\.\d{2})", line)
-
-                if m:
-                    tax = parse_money(m.group(1))
-                    break
-
-        if tax is not None:
-            break
-
+if found_tax:
+    tax = round(tax_total, 2)
     # ----------------------------------------
     # Currency
     # ----------------------------------------
